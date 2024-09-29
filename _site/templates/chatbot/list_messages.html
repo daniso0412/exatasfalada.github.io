@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        /* Área de mensagens com rolagem */
+        .messages-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 10px;
+            margin-top: 70px; /* Espaço para o ícone fixo */
+        }
+        .message {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .message .icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        .message-text {
+            flex-grow: 1;
+        }
+        .message-text strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        /* Ícone de mensagem fixo */
+        .fixed-icon {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        .fixed-icon .icon {
+            margin-right: 10px;
+        }
+        /* Formulário fixo */
+        .form-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .form-container textarea {
+            width: 100%;
+            margin-right: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            resize: none;
+        }
+        .form-container input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .chat-send-button:hover {
+            background-color: #e0e0e0;
+        }
+
+
+        .chat-input-container i {
+            font-size: 20px;
+            margin-right: 20px;
+            margin-left: -50px;
+            font-size: 18px;
+            color: #333;
+        }
+        .message img {
+            max-width: 100%;  /* Para ajustar a largura da imagem à tela */
+            height: auto;     /* Mantém a proporção da imagem */
+            margin-top: 10px; /* Espaço entre o texto e a imagem */
+            border-radius: 10px; /* Deixa as bordas da imagem arredondadas */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra para a imagem */
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Ícone de mensagem fixo no topo -->
+    <div class="fixed-icon">
+        <div class="message-text">
+            <strong>Mensagem ChatExatas</strong>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Área de mensagens rolável -->
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="message">
+                <div class="message-text">
+                    
+                    {% if message.file %}
+                    {% if message.file.url|slice:"-4:" == ".jpg" or message.file.url|slice:"-4:" == ".png" or message.file.url|slice:"-5:" == ".jpeg" %}
+                    <img src="{{ message.file.url }}" alt="Imagem enviada" style="max-width: 100%; height: auto;"/>
+                {% else %}
+                    <strong>Arquivo:</strong> <a href="{{ message.file.url }}">Baixar arquivo</a>
+                {% endif %}
+                    <strong>Bot:</strong> {{ message.bot_response }}
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% endfor %}
+        </div>
+
+        <!-- Formulário de envio fixo -->
+        <form class="form-container" action="{% url 'send_message' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />  <!-- Campo de upload de arquivo -->
+            <button type="submit" class="chat-send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+        
+        </form>
+    </div>
+</body>
+</html>

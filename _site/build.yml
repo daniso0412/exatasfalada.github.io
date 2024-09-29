@@ -1,0 +1,36 @@
+name: Build Jekyll Site
+
+on:
+  push:
+    branches:
+      - master  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.9.5'
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.5'
+    
+    - name: Install Jekyll and Bundler
+      run: |
+        gem install jekyll bundler
+    
+    - name: Install dependencies
+      run: |
+        bundle install
+    
+    - name: Build Jekyll site
+      run: |
+        bundle exec jekyll build --incremental
